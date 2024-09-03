@@ -34,16 +34,6 @@ Once the virtual environment is activated, install the required dependencies:
 $ pip install -r requirements.txt
 ```
 
-### Synthesizing the CloudFormation Template
-
-After setting up the virtual environment and installing dependencies, you can synthesize the CloudFormation template:
-
-```bash
-$ cdk synth
-```
-
-To add additional dependencies, for example, other CDK libraries, just add them to your `setup.py` file and rerun the `pip install -r requirements.txt` command.
-
 ## AWS Academy Example
 
 This project includes an example specifically designed for AWS Academy. It demonstrates a custom AWS CDK application setup using a custom bootstrap template. This template avoids creating new IAM roles and instead sets roles to `none`, so that the resources, such as the synthesizer, Lambda functions, and EC2 instances, fall back to using the `LabRole`.
@@ -57,6 +47,23 @@ cdk bootstrap --profile utec --template custom-bootstrap-template.yaml
 - **`--profile utec`:** Specifies the AWS CLI profile to use. This flag is optional; if omitted, the default profile will be used.
 - **`--template custom-bootstrap-template.yaml`:** Specifies the custom bootstrap template to be used instead of the default one.
 
+### Synthesizing the CloudFormation Template
+
+After setting up the virtual environment and installing dependencies, you can synthesize the CloudFormation template:
+
+```bash
+$ cdk synth --profile utec
+```
+
+To add additional dependencies, for example, other CDK libraries, just add them to your `setup.py` file and rerun the `pip install -r requirements.txt` command.
+
+### Deploying the Stack
+
+To deploy the stack to your AWS account, run:
+
+```bash
+$ cdk deploy --profile utec
+```
 ### Important Notes:
 
 - The roles for the synthesizer, Lambda functions, and EC2 instances are configured to fall back to the `LabRole`.
