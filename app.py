@@ -1,28 +1,39 @@
 #!/usr/bin/env python3
 import os
-
 import aws_cdk as cdk
-
-from app_cdk_python.app_cdk_python_stack import AppCdkPythonStack
-
+from aws_cdk import DefaultStackSynthesizer
+from app_cdk_python.app_cdk_python_stack import AppCdkStack
 
 app = cdk.App()
-AppCdkPythonStack(app, "AppCdkPythonStack",
-    # If you don't specify 'env', this stack will be environment-agnostic.
-    # Account/Region-dependent features and context lookups will not work,
-    # but a single synthesized template can be deployed anywhere.
 
-    # Uncomment the next line to specialize this stack for the AWS Account
-    # and Region that are implied by the current CLI configuration.
+default_stack_synthesizer = DefaultStackSynthesizer(
+    file_assets_bucket_name="cdk-${Qualifier}-assets-${AWS::AccountId}-${AWS::Region}",
+    bucket_prefix="",
 
-    #env=cdk.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'), region=os.getenv('CDK_DEFAULT_REGION')),
+    image_assets_repository_name="cdk-${Qualifier}-container-assets-${AWS::AccountId}-${AWS::Region}",
 
-    # Uncomment the next line if you know exactly what Account and Region you
-    # want to deploy the stack to. */
+    deploy_role_arn="arn:${AWS::Partition}:iam::${AWS::AccountId}:role/LabRole",
+    deploy_role_external_id="",
 
-    #env=cdk.Environment(account='123456789012', region='us-east-1'),
+    file_asset_publishing_role_arn="arn:${AWS::Partition}:iam::${AWS::AccountId}:role/LabRole",
+    file_asset_publishing_external_id="",
 
-    # For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html
-    )
+    image_asset_publishing_role_arn="arn:${AWS::Partition}:iam::${AWS::AccountId}:role/LabRole",
+    image_asset_publishing_external_id="",
+
+    cloud_formation_execution_role="arn:${AWS::Partition}:iam::${AWS::AccountId}:role/LabRole",
+
+    lookup_role_arn="arn:${AWS::Partition}:iam::${AWS::AccountId}:role/LabRole",
+    lookup_role_external_id="",
+
+    bootstrap_stack_version_ssm_parameter="/cdk-bootstrap/${Qualifier}/version",
+
+    generate_bootstrap_version_rule=True,
+)
+
+AppCdkStack(app, "AppCdkPythonStack",
+    synthesizer=default_stack_synthesizer,
+    env=cdk.Environment(account=os.getenv('CDK_DEFAULT_ACCOUNT'), region=os.getenv('CDK_DEFAULT_REGION')),
+)
 
 app.synth()
